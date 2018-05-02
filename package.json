@@ -1,0 +1,23 @@
+{
+  "author": "GT, Virgo Systems",
+  "private": true,
+  "engines": {
+    "node": ">=6.11.5",
+    "npm": ">=4.0"
+  },
+  "dependencies": {
+    "blessed-vue": "^2.0.1",
+    "vue": "^2.5.16"
+  },
+  "devDependencies": {
+    "vue-loader": "^15.0.4",
+    "vue-template-compiler": "^2.5.16",
+    "webpack": "^4.6.0",
+    "webpack-cli": "^2.0.15",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "scripts": {
+    "dev": "webpack --progress --hide-modules --watch",
+    "build": "webpack --progress --hide-modules"
+  }
+}
