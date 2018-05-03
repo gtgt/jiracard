@@ -6,8 +6,7 @@
     "npm": ">=4.0"
   },
   "dependencies": {
-    "blessed-vue": "^2.0.1",
-    "vue": "^2.5.16"
+    "blessed-vue": "^2.0.1"
   },
   "devDependencies": {
     "vue-loader": "^15.0.4",

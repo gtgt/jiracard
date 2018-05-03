@@ -1,3 +1,4 @@
+<!--suppress HtmlUnknownTag, HtmlUnknownAttribute, CheckEmptyScriptTag, CssUnknownProperty -->
 <template>
   <!-- Every blessed app needs a root "screen" element.
         smartCSR is scroll-region painting, :keys enables...
@@ -13,44 +14,40 @@
           need to be specified for every element. :(
     -->
     <box style='bg: #3FA767; fg: #F9EC31;' width="100%" height="9%">
-      <text
-        style='bg: #3FA767; fg: #F9EC31; bold: true;'
-        top="center" left="center"
-        content="AlligatorIO - Feed Readerish Thing"
-      />
+      <text style='bg: #3FA767; fg: #F9EC31; bold: true;' top="center" left="center" content="Virgo - Jira Card Printer" />
     </box>
     <box style='bg: black; fg: #3FA767' width="100%" height="92%" top="9%">
       <!-- Render loading text if the feed hasn't loaded yet. -->
-      <text v-if="isLoading"
-        style="bg: black; fg: #3FA767; bold: true;"
-        top="center" left="center"
-        content="Loading..."
-      />
-      <!-- A list that displays a scrollable and selectable list of text.
-            In this case, the feed titles.
-            :keys="true" and :mouse="true" enable keyboard and mouse
-            navigation in the list.
-      -->
-      <list v-else
+      <text v-if="isLoading" style="bg: black; fg: #3FA767; bold: true;" top="center" left="center" content="Loading..." />
+
+      <list v-else v-focus
         height="100%" width="100%"
         :border="{}"
         :style="listStyle"
         :keys="true" :mouse="true"
-        :items="feedTitles"
-        @select="handleListSelect"
+        :items="issueTitles"
+        @select="onListSelect"
+        @keypress="onListKeypress"
       />
     </box>
+    <issue v-if="issue" :issue="issue" />
   </screen>
 </template>
 
 <script>
 // A request library.
-import http from 'http';
+import https from 'https';
+
+import Issue from '../views/issue.vue';
 
 export default {
+  components: {
+    Issue
+  },
   data() {
     return {
-      feed: null,
+      issues: null,
+      issue: null,
       isLoading: true,
       // Note we use JS styles for the list because the object is so large it would
       // be a pain to do in the template.
@@ -72,21 +69,25 @@ export default {
   },
 
   computed: {
-    // Produces a list of article titles from the feed object.
-    feedTitles() {
-      if(this.feed && this.feed.items && this.feed.items.length) {
-        return this.feed.items.map(item => item.title);
+    // Produces a list of article titles from the issues object.
+    issueTitles() {
+      if(this.issues && this.issues.length) {
+        return this.issues.map(item => item.key.padEnd(10) + ' - ' + item.fields.summary);
       }
     }
   },
 
   methods: {
     // Opens the selected list item in a browser.
-    handleListSelect(event) {
-      const feedIndex = this.feedTitles.indexOf(event.content);
-      const feedItem = this.feed.items[feedIndex];
-
-      console.log(feedItem.link);
+    onListSelect(e) {
+      const i = this.issueTitles.indexOf(e.content);
+      const issue = this.issues[i];
+      this.issue = issue;
+    },
+    onListKeypress(e, key) {
+      if (['up', 'down'].includes(key.name)) {
+        this.issue = null;
+      }
     }
   },
 
@@ -96,7 +97,7 @@ export default {
       process.exit(0);
     });
 
-    http.get('example2.json', (res) => {
+    https.get('https://raw.githubusercontent.com/gtgt/jiracard/master/example.json', (res) => {
       const { statusCode } = res;
       const contentType = res.headers['content-type'];
 
@@ -104,7 +105,7 @@ export default {
       if (statusCode !== 200) {
         error = new Error('Request Failed.\n' +
                           `Status Code: ${statusCode}`);
-      } else if (!/^application\/json/.test(contentType)) {
+      } else if (!/^(application\/json|text\/plain)/.test(contentType)) {
         error = new Error('Invalid content-type.\n' +
                           `Expected application/json but received ${contentType}`);
       }
@@ -121,9 +122,8 @@ export default {
       res.on('end', () => {
         try {
           const parsedData = JSON.parse(rawData);
-          console.log(parsedData);
           this.isLoading = false;
-          //this.feed = parser.done();
+          this.issues = parsedData.issues;
         } catch (e) {
           console.error(e.message);
         }
