@@ -39,6 +39,7 @@
 import https from 'https';
 
 import Issue from '../views/issue.vue';
+import cardImage from '../../cardimage.js';
 
 export default {
   components: {
@@ -85,8 +86,12 @@ export default {
       this.issue = issue;
     },
     onListKeypress(e, key) {
-      if (['up', 'down'].includes(key.name)) {
+      if (['esc'].includes(key.name)) {
         this.issue = null;
+      } else if (['return'].includes(key.name)) {
+        if (this.issue) {
+          cardImage.create(this.issue);
+        }
       }
     }
   },

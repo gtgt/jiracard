@@ -7,9 +7,13 @@
   },
   "dependencies": {
     "blessed-vue": "^2.0.1",
-    "node-printer": "^1.0.2"
+    "escpos": "^2.4.5",
+    "node-gd": "^1.5.4"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0-beta.46",
+    "@babel/preset-env": "^7.0.0-beta.46",
+    "babel-loader": "^8.0.0-beta",
     "vue-loader": "^15.0.4",
     "vue-template-compiler": "^2.5.16",
     "webpack": "^4.6.0",
