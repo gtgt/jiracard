@@ -1,6 +1,6 @@
 <!--suppress HtmlUnknownTag, HtmlUnknownAttribute, CheckEmptyScriptTag, CssUnknownProperty -->
 <template>
-  <box top="center" left="center" width="50%" :height="20" :keys="true" :mouse="true"
+  <box top="center" left="center" width="75%" :height="20" :keys="true" :mouse="true"
        :border="{ type: 'line' }" :style="{ border: { fg: 'green' } }"
        :label="' Issue: '+issue.key+' '"
   >
