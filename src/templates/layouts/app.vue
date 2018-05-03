@@ -72,7 +72,7 @@ export default {
     // Produces a list of article titles from the issues object.
     issueTitles() {
       if(this.issues && this.issues.length) {
-        return this.issues.map(item => item.key.padEnd(10) + ' - ' + item.fields.summary);
+        return this.issues.map(item => ("          " + item.key).slice(-10) + ' - ' + item.fields.summary);
       }
     }
   },
