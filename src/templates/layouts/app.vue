@@ -13,8 +13,8 @@
           You'll also notice there's no style inheritance. So background and foreground colors
           need to be specified for every element. :(
     -->
-    <box style='bg: #3FA767; fg: #F9EC31;' width="100%" height="9%">
-      <text style='bg: #3FA767; fg: #F9EC31; bold: true;' top="center" left="center" content="Virgo - Jira Card Printer" />
+    <box style='bg: #3FA767; fg: #F9EC31;' width="100%" :height="3">
+      <listbar style='bg: #3FA767; fg: #F9EC31; bold: true;' :top="1" left="left" :items="menuItems" />
     </box>
     <box style='bg: black; fg: #3FA767' width="100%" height="92%" top="9%">
       <!-- Render loading text if the feed hasn't loaded yet. -->
@@ -48,6 +48,9 @@ export default {
   },
   data() {
     return {
+      options: {
+        project: null
+      },
       issues: null,
       issue: null,
       isLoading: true,
@@ -71,6 +74,17 @@ export default {
   },
 
   computed: {
+    menuItems() {
+      let menu = {};
+      this.options.keys().forEach((key) => {
+        menu[key] = {
+          keys: [],
+          callback: () => {
+
+          }
+        }
+      });
+    },
     // Produces a list of article titles from the issues object.
     issueTitles() {
       if(this.issues && this.issues.length) {
@@ -102,7 +116,7 @@ export default {
     this.$refs.screen.key(['C-c'], () => {
       process.exit(0);
     });
-    jira.issuesExample('EDSW').then((issues) => {
+    jira.issues('EDSW').then((issues) => {
       this.isLoading = false;
       this.issues = issues;
     }).catch((err) => {
