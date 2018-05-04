@@ -36,14 +36,15 @@
 
 <script>
 // A request library.
-import https from 'https';
 
-import Issue from '../views/issue.vue';
+
+import IssueView from '../views/issue.vue';
+import jira from '../../jira.js';
 import cardImage from '../../cardimage.js';
 
 export default {
   components: {
-    Issue
+    Issue: IssueView
   },
   data() {
     return {
@@ -101,40 +102,11 @@ export default {
     this.$refs.screen.key(['C-c'], () => {
       process.exit(0);
     });
-
-    https.get('https://raw.githubusercontent.com/gtgt/jiracard/master/example.json', (res) => {
-      const { statusCode } = res;
-      const contentType = res.headers['content-type'];
-
-      let error;
-      if (statusCode !== 200) {
-        error = new Error('Request Failed.\n' +
-                          `Status Code: ${statusCode}`);
-      } else if (!/^(application\/json|text\/plain)/.test(contentType)) {
-        error = new Error('Invalid content-type.\n' +
-                          `Expected application/json but received ${contentType}`);
-      }
-      if (error) {
-        console.error(error.message);
-        // consume response data to free up memory
-        res.resume();
-        return;
-      }
-
-      res.setEncoding('utf8');
-      let rawData = '';
-      res.on('data', (chunk) => { rawData += chunk; });
-      res.on('end', () => {
-        try {
-          const parsedData = JSON.parse(rawData);
-          this.isLoading = false;
-          this.issues = parsedData.issues;
-        } catch (e) {
-          console.error(e.message);
-        }
-      });
-    }).on('error', (e) => {
-      console.error(`Got error: ${e.message}`);
+    jira.issuesExample('EDSW').then((issues) => {
+      this.isLoading = false;
+      this.issues = issues;
+    }).catch((err) => {
+      console.log(err);
     });
   }
 }
