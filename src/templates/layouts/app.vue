@@ -14,7 +14,7 @@
           need to be specified for every element. :(
     -->
     <box style='bg: #3FA767; fg: #F9EC31;' width="100%" :height="3">
-      <listbar style='bg: #3FA767; fg: #F9EC31; bold: true;' :top="1" left="left" :items="menuItems" />
+      <listbar style='bg: #3FA767; fg: #F9EC31; bold: true;' :top="1" left="left" :items="optionItems" />
     </box>
     <box style='bg: black; fg: #3FA767' width="100%" height="92%" top="9%">
       <!-- Render loading text if the feed hasn't loaded yet. -->
@@ -40,7 +40,6 @@
 
 import IssueView from '../views/issue.vue';
 import jira from '../../jira.js';
-import cardImage from '../../cardimage.js';
 
 export default {
   components: {
@@ -74,16 +73,17 @@ export default {
   },
 
   computed: {
-    menuItems() {
-      let menu = {};
-      this.options.keys().forEach((key) => {
-        menu[key] = {
+    optionItems() {
+      let optionMenu = {}, menuKey;
+      for (menuKey in this.options) {
+        optionMenu[menuKey] = {
           keys: [],
           callback: () => {
 
           }
         }
-      });
+      }
+      return optionMenu;
     },
     // Produces a list of article titles from the issues object.
     issueTitles() {
@@ -101,11 +101,11 @@ export default {
       this.issue = issue;
     },
     onListKeypress(e, key) {
-      if (['esc'].includes(key.name)) {
+      if (['escape', 'esc'].includes(key.name)) {
         this.issue = null;
       } else if (['return'].includes(key.name)) {
         if (this.issue) {
-          cardImage.create(this.issue);
+
         }
       }
     }

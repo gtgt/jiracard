@@ -6,9 +6,12 @@ const { VueLoaderPlugin } = require('vue-loader');
 module.exports = {
   mode: 'development',
   entry: './src/main.js',
+  devtool: 'cheap-module-eval-source-map',
   output: {
     path: path.resolve(__dirname, './dist'),
     filename: 'jiracard.js',
+    sourceMapFilename: '[file].map',
+    devtoolModuleFilenameTemplate: 'webpack:///[resource-path]?[loaders]',
     libraryTarget: 'commonjs'
   },
   target: 'node',
@@ -33,6 +36,10 @@ module.exports = {
     ]
   },
   plugins: [
-    new VueLoaderPlugin()
+    new VueLoaderPlugin(),
+    new webpack.SourceMapDevToolPlugin({
+      filename: '[name].map',
+      exclude: []
+    })
   ]
 }

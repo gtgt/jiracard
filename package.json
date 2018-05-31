@@ -6,9 +6,10 @@
     "npm": ">=4.0"
   },
   "dependencies": {
+    "blessed-contrib": "^4.8.5",
     "blessed-vue": "^2.0.1",
-    "escpos": "^2.4.5",
-    "node-gd": "^1.5.4"
+    "node-gd": "^1.5.4",
+    "printer": "^0.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.46",
@@ -23,8 +24,10 @@
     "webpack-cli": "^2.0.15",
     "webpack-node-externals": "^1.7.2"
   },
+  "main": "dist/jiracard.js",
   "scripts": {
     "dev": "webpack --progress --hide-modules --watch",
+    "debug": "node --inspect dist/jiracard.js",
     "build": "webpack --progress --hide-modules"
   }
 }
