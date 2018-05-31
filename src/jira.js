@@ -7,14 +7,15 @@ let jira = new JiraClient({
   authApiVersion: '1',
   host: 'jira.virgo.hu',
   basic_auth: {
-    username: 'gere.tamas',
-    password: 'xxx',
+    username: 'x',
+    password: 'x',
   },
   cookie_jar: jar
 });
 import https from 'https';
 
 export default {
+  jira: jira,
   projects() {
     return new Promise(function(resolve, reject) {
       jira.project.getAllProjects({}).then((data) => {

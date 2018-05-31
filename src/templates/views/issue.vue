@@ -5,8 +5,8 @@
        :label="' IssueView: '+issue.key+' '"
   >
     <listtable :data="issueDetails" columnWidth="20" width="90%" :top="1" :right="11" :left="1" :height="16" align="left" />
-    <picture v-if="picture" :file="picture" :cols="10" :right="1" :width="10" :top="1" :height="10" style='bg: #3FA767; fg: #F9EC31;' />
-    <listbar v-focus style='bg: #3FA767; fg: #F9EC31; bold: true;' :bottom="1" left="left" :height="1" :items="actions" />
+    <image v-if="picture" :file="picture" :cols="10" :right="1" :width="10" :top="1" :height="10" style='bg: #3FA767; fg: #F9EC31;' />
+    <listbar v-focus ref='actionbar' :style="{selected: {bold: true}}" :bottom="1" left="left" :height="1" :items="actions" @keypress="onActionbarKeypress" />
   </box>
 </template>
 
@@ -22,6 +22,9 @@
       issue: {
         type: Object
       },
+      options: {
+        type: Object
+      }
     },
     data() {
       return {
@@ -61,6 +64,18 @@
           ['key', this.issue.key],
           ['summary', this.issue.fields.summary]
         ];
+      }
+    },
+    methods: {
+      onActionbarKeypress(element, key) {
+        if (['right'].includes(key.name)) {
+          this.$refs.actionbar.moveRight(1);
+        } else if (['left'].includes(key.name)) {
+          this.$refs.actionbar.moveLeft(1);
+        } else if (['escape', 'esc'].includes(key.name)) {
+          this.$parent.issue = null;
+          this.$parent.$refs.list.focus();
+        }
       }
     },
     mounted() {

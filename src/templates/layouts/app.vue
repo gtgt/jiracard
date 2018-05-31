@@ -13,14 +13,14 @@
           You'll also notice there's no style inheritance. So background and foreground colors
           need to be specified for every element. :(
     -->
-    <box style='bg: #3FA767; fg: #F9EC31;' width="100%" :height="3">
-      <listbar style='bg: #3FA767; fg: #F9EC31; bold: true;' :top="1" left="left" :items="optionItems" />
+    <box width="100%" :height="3" style="bg: black; fg: #3FA767">
+      <listbar ref='menubar' :style="{selected: {bold: true}}" :top="1" left="left" :items="optionItems" :keys="true" />
     </box>
-    <box style='bg: black; fg: #3FA767' width="100%" height="92%" top="9%">
+    <box style="bg: black; fg: #3FA767" width="100%" height="92%" top="9%">
       <!-- Render loading text if the feed hasn't loaded yet. -->
       <text v-if="isLoading" style="bg: black; fg: #3FA767; bold: true;" top="center" left="center" content="Loading..." />
 
-      <list v-else v-focus
+      <list ref='list' v-else v-focus
         height="100%" width="100%"
         :border="{}"
         :style="listStyle"
@@ -30,7 +30,8 @@
         @keypress="onListKeypress"
       />
     </box>
-    <issue v-if="issue" :issue="issue" />
+    <issue v-if="issue" :issue="issue" :options="options" />
+    <login ref='login' :login="login" :hidden="true" />
   </screen>
 </template>
 
@@ -39,20 +40,28 @@
 
 
 import IssueView from '../views/issue.vue';
+import LoginView from '../views/login.vue';
 import jira from '../../jira.js';
 
 export default {
   components: {
-    Issue: IssueView
+    Issue: IssueView,
+    Login: LoginView
   },
   data() {
     return {
       options: {
-        project: null
+        project: null,
+        assignee: null,
       },
+      authinfo: null,
       issues: null,
       issue: null,
       isLoading: true,
+      login: (username, password) => {
+        this.authinfo = {user: username, pass: password};
+        jira.basic_auth = this.authInfo;
+      },
       // Note we use JS styles for the list because the object is so large it would
       // be a pain to do in the template.
       listStyle: {
@@ -95,20 +104,26 @@ export default {
 
   methods: {
     // Opens the selected list item in a browser.
-    onListSelect(e) {
-      const i = this.issueTitles.indexOf(e.content);
+    onListSelect(element) {
+      const i = this.issueTitles.indexOf(element.content);
       const issue = this.issues[i];
       this.issue = issue;
     },
-    onListKeypress(e, key) {
+    onListKeypress(element, key) {
       if (['escape', 'esc'].includes(key.name)) {
         this.issue = null;
       } else if (['return'].includes(key.name)) {
         if (this.issue) {
 
         }
+      } else if (['right'].includes(key.name)) {
+        this.$refs.menubar.moveRight(1);
+        this.$refs.menubar.render();
+      } else if (['left'].includes(key.name)) {
+        this.$refs.menubar.moveLeft(1);
+        this.$refs.menubar.render();
       }
-    }
+    },
   },
 
   mounted() {
@@ -120,7 +135,11 @@ export default {
       this.isLoading = false;
       this.issues = issues;
     }).catch((err) => {
-      console.log(err);
+      if (!this.authInfo) {
+        this.issue = null;
+        this.$refs.list.hide();
+        this.$refs.login.show();
+      }
     });
   }
 }

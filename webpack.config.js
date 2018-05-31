@@ -12,7 +12,7 @@ module.exports = {
     filename: 'jiracard.js',
     sourceMapFilename: '[file].map',
     devtoolModuleFilenameTemplate: 'webpack:///[resource-path]?[loaders]',
-    libraryTarget: 'commonjs'
+    libraryTarget: 'commonjs2'
   },
   target: 'node',
   externals: [nodeExternals()],
@@ -32,6 +32,9 @@ module.exports = {
       {
         test: /\.vue$/,
         loader: 'vue-loader',
+        options: {
+          optimizeSSR: false
+        }
       }
     ]
   },
