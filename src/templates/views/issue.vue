@@ -33,12 +33,13 @@
           'print': {
             keys: ['p'],
             callback: () => {
-              console.log(arguments);
-              cardImage.create(this.issue).then((filename) => {
-                console.log('print...');
+              console.trace();
+              cardImage.create(this.issue).then((data) => {
+                console.log('printing... data type is: '+typeof(data) + ', is buffer: ' + Buffer.isBuffer(data));
                 return;
-                printer.printFile({
-                  filename: filename,
+                printer.printDirect({
+                  data: data,
+                  type: 'PDF',
                   printer: 'zj-58', // printer name, if missing then will print to default printer
                   options: {
                     'landscape': false,
@@ -80,11 +81,13 @@
     },
     mounted() {
       if (this.issue.fields.assignee) {
-        let avatarUrl = this.issue.fields.assignee.avatarUrls['48x48'], filename = 'picture.jpg';
+        let avatarUrl = this.issue.fields.assignee.avatarUrls['48x48'], filename = 'tmp/picture.png';
         let file = fs.createWriteStream(filename);
         let request = https.get(avatarUrl, function(response) {
           response.pipe(file);
-          this.picture = filename;
+          response.on('end', () => {
+            this.picture = filename;
+          });
         });
       }
     }

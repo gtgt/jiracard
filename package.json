@@ -7,16 +7,16 @@
   },
   "dependencies": {
     "blessed-contrib": "^4.8.5",
-    "blessed-vue": "^2.0.1",
-    "node-gd": "^1.5.4",
-    "printer": "^0.2.2"
+    "blessed-vue": "^2.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.46",
     "@babel/preset-env": "^7.0.0-beta.46",
     "babel-loader": "^8.0.0-beta",
     "jira-connector": "^2.8.0",
-    "request": "^2.85.0",
+    "pdfkit": "^0.8.3",
+    "printer": "^0.2.2",
+    "request": "^2.87.0",
     "tough-cookie-filestore": "0.0.1",
     "vue-loader": "^15.0.4",
     "vue-template-compiler": "^2.5.16",

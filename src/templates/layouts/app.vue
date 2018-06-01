@@ -59,8 +59,9 @@ export default {
       issue: null,
       isLoading: true,
       login: (username, password) => {
-        this.authinfo = {user: username, pass: password};
+        this.authInfo = {user: username, pass: password};
         jira.basic_auth = this.authInfo;
+        this.refresh();
       },
       // Note we use JS styles for the list because the object is so large it would
       // be a pain to do in the template.
@@ -103,6 +104,21 @@ export default {
   },
 
   methods: {
+    refresh() {
+      this.isLoading = true;
+      jira.issues('EDSW').then((issues) => {
+        this.isLoading = false;
+        this.issues = issues;
+      }).catch((err) => {
+        if (!this.authInfo) {
+          if (this.$refs.list) {
+            this.issue = null;
+            this.$refs.list.$parent.hide();
+          }
+          this.$refs.login.show();
+        }
+      });
+    },
     // Opens the selected list item in a browser.
     onListSelect(element) {
       const i = this.issueTitles.indexOf(element.content);
@@ -131,16 +147,7 @@ export default {
     this.$refs.screen.key(['C-c'], () => {
       process.exit(0);
     });
-    jira.issues('EDSW').then((issues) => {
-      this.isLoading = false;
-      this.issues = issues;
-    }).catch((err) => {
-      if (!this.authInfo) {
-        this.issue = null;
-        this.$refs.list.hide();
-        this.$refs.login.show();
-      }
-    });
+    this.refresh();
   }
 }
 </script> 
