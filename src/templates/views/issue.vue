@@ -31,29 +31,7 @@
         picture: null,
         actions: {
           'print': {
-            keys: ['p'],
-            callback: () => {
-              console.trace();
-              cardImage.create(this.issue).then((data) => {
-                console.log('printing... data type is: '+typeof(data) + ', is buffer: ' + Buffer.isBuffer(data));
-                return;
-                printer.printDirect({
-                  data: data,
-                  type: 'PDF',
-                  printer: 'zj-58', // printer name, if missing then will print to default printer
-                  options: {
-                    'landscape': false,
-                    'fit-to-page': true
-                  },
-                  success:function(jobID){
-                    console.log("sent to printer with ID: "+jobID);
-                  },
-                  error:function(err){
-                    console.log(err);
-                  }
-                });
-              });
-            }
+            keys: ['p']
           }
         },
       }
@@ -76,6 +54,26 @@
         } else if (['escape', 'esc'].includes(key.name)) {
           this.$parent.issue = null;
           this.$parent.$refs.list.focus();
+        } else if (['p'].includes(key.name)) {
+            cardImage.create(this.issue).then((data) => {
+              console.log('printing... data type is: '+typeof(data) + ', is buffer: ' + Buffer.isBuffer(data));
+              return;
+              printer.printDirect({
+                data: data,
+                type: 'PDF',
+                printer: 'zj-58', // printer name, if missing then will print to default printer
+                options: {
+                  'landscape': false,
+                  'fit-to-page': true
+                },
+                success:function(jobID){
+                  console.log("sent to printer with ID: "+jobID);
+                },
+                error:function(err){
+                  console.log(err);
+                }
+              });
+            });
         }
       }
     },
