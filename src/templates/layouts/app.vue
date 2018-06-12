@@ -31,7 +31,7 @@
       />
     </box>
     <issue v-if="issue" :issue="issue" :options="options" />
-    <login ref='login' :login="login" :hidden="true" />
+    <login ref='login' v-on:login="onLogin" :hidden="true" />
   </screen>
 </template>
 
@@ -54,15 +54,11 @@ export default {
         project: null,
         assignee: null,
       },
-      authinfo: null,
+      authInfo: null,
       issues: null,
       issue: null,
       isLoading: true,
-      login: (username, password) => {
-        this.authInfo = {user: username, pass: password};
-        jira.basic_auth = this.authInfo;
-        this.refresh();
-      },
+      jira: jira,
       // Note we use JS styles for the list because the object is so large it would
       // be a pain to do in the template.
       listStyle: {
@@ -104,9 +100,14 @@ export default {
   },
 
   methods: {
+    onLogin(username, password) {
+      this.authInfo = {user: username, pass: password};
+      this.jira.jira.basic_auth = this._data.authInfo;
+      this.refresh();
+    },
     refresh() {
       this.isLoading = true;
-      jira.issues('EDSW').then((issues) => {
+      jira.issues('EDSUP').then((issues) => {
         this.isLoading = false;
         this.issues = issues;
       }).catch((err) => {

@@ -16,7 +16,7 @@
             :width="20" :height="3" :top="9" left="center"
             align="center" valign="middle"
             :style="[buttonStyle, submitting && loggingStyle]"
-            @press="submit"/>
+            v-on:press="submit"/>
   </form>
 </template>
 
@@ -29,9 +29,6 @@ export default {
     },
     password: {
       type: String
-    },
-    login: {
-      type: Function
     }
   },
   data() {
@@ -56,9 +53,7 @@ export default {
     submit() {
       this.$el.hide();
       this.submitting = true;
-      if (this._props.login) {
-        this._props.login(this.$refs.username.value, this.$refs.password.value);
-      }
+      this.$emit('login', this.$refs.username.value, this.$refs.password.value);
     },
     show() {
       this.$el.show();

@@ -16,8 +16,8 @@ export default {
       doc.font('fonts/NotoMono-Regular.ttf');
 
       // Render string in image
-      doc.fontSize(11).text(issue.key).moveDown();
-      doc.fontSize(9).text(issue.fields.summary);
+      doc.fontSize(48).text(issue.key).moveDown();
+      doc.fontSize(28).text(issue.fields.summary);
 
       let buffers = [];
       doc.on('data', buffers.push.bind(buffers));
@@ -27,7 +27,7 @@ export default {
       if (issue.fields.assignee) {
         let avatarUrl = issue.fields.assignee.avatarUrls['48x48'];
         request.get({url: avatarUrl, encoding: null}, function(error, response, body) {
-          doc.image(body, 320, 0, {fit: [48, 48]});
+          doc.image(body, 500, 0, {fit: [96, 96]});
           doc.end();
         });
       } else {

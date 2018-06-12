@@ -56,8 +56,7 @@
           this.$parent.$refs.list.focus();
         } else if (['p'].includes(key.name)) {
             cardImage.create(this.issue).then((data) => {
-              console.log('printing... data type is: '+typeof(data) + ', is buffer: ' + Buffer.isBuffer(data));
-              return;
+              //console.log('printing... data type is: '+typeof(data) + ', is buffer: ' + Buffer.isBuffer(data));
               printer.printDirect({
                 data: data,
                 type: 'PDF',
