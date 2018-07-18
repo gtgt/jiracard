@@ -7,4 +7,5 @@ package-lock.json
 demo
 dist
 cookies.json
+example*.json
 tmp/*
