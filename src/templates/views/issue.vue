@@ -5,7 +5,7 @@
        :label="' IssueView: '+issue.key+' '"
   >
     <listtable :data="issueDetails" columnWidth="20" width="90%" :top="1" :right="11" :left="1" :height="16" align="left" />
-    <image v-if="picture" :file="picture" :cols="10" :right="1" :width="10" :top="1" :height="10" style='bg: #3FA767; fg: #F9EC31;' />
+    <image v-if="picture" :file="picture" :cols="10" :right="1" :width="10" :top="1" :height="10" style="bg: #3FA767; fg: #F9EC31;" />
     <listbar v-focus ref='actionbar' :style="{selected: {bold: true}}" :bottom="1" left="left" :height="1" :items="actions" @keypress="onActionbarKeypress" />
   </box>
 </template>
@@ -13,7 +13,7 @@
 <script>
   import fs from 'fs';
   import https from 'https';
-  import cardImage from '../../cardimage.js';
+  import cardpdf from '../../cardpdf.js';
   import printer from 'printer';
 
   export default {
@@ -39,10 +39,18 @@
     computed: {
       // Produces a list of article titles from the issues object.
       issueDetails() {
-        return [
-          ['key', this.issue.key],
-          ['summary', this.issue.fields.summary]
-        ];
+        var createDetails = (issue) => {
+          return [
+            ['key', issue.key],
+            ['issue type', issue.fields.issuetype ? issue.fields.issuetype.name : '?'],
+            ['reporter', issue.fields.reporter ? issue.fields.reporter.name : '-'],
+            ['assignee', issue.fields.assignee ? issue.fields.assignee.name : '-'],
+            ['avatar', issue.fields.assignee ? issue.fields.assignee.avatarUrls['48x48'] : ''],
+            ['summary', issue.fields.summary],
+            ['status', issue.fields.status.name+(issue.fields.status.statusCategory ? ' ('+issue.fields.status.statusCategory.name+')' : '')],
+          ];
+        }
+        return createDetails(this.issue);
       }
     },
     methods: {
@@ -55,7 +63,7 @@
           this.$parent.issue = null;
           this.$parent.$refs.list.focus();
         } else if (['p'].includes(key.name)) {
-            cardImage.create(this.issue).then((data) => {
+            cardpdf.create(this.issue).then((data) => {
               //console.log('printing... data type is: '+typeof(data) + ', is buffer: ' + Buffer.isBuffer(data));
               printer.printDirect({
                 data: data,
@@ -78,9 +86,10 @@
     },
     mounted() {
       if (this.issue.fields.assignee) {
-        let avatarUrl = this.issue.fields.assignee.avatarUrls['48x48'], filename = 'tmp/picture.png';
+        let that = this;
+        let avatarUrl = this.issue.fields.assignee.avatarUrls['48x48'], filename = fs.realpathSync('tmp')+'/picture.png';
         let file = fs.createWriteStream(filename);
-        let request = https.get(avatarUrl, function(response) {
+        let request = https.get(avatarUrl, (response) => {
           response.pipe(file);
           response.on('end', () => {
             this.picture = filename;

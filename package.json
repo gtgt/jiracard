@@ -28,6 +28,7 @@
   "scripts": {
     "dev": "webpack --progress --hide-modules --watch",
     "debug": "node --inspect dist/jiracard.js",
-    "build": "webpack --progress --hide-modules"
+    "build": "webpack --progress --hide-modules",
+    "start": "webpack --progress --hide-modules && node dist/jiracard.js"
   }
 }
