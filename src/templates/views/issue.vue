@@ -5,7 +5,7 @@
        :label="' IssueView: '+issue.key+' '"
   >
     <listtable :data="issueDetails" columnWidth="20" width="90%" :top="1" :right="11" :left="1" :height="16" align="left" />
-    <image v-if="picture" :file="picture" :cols="10" :right="1" :width="10" :top="1" :height="10" style="bg: #3FA767; fg: #F9EC31;" />
+    <image v-if="picture" :file="picture" :width="20" :height="10" :right="1" :top="1" style="bg: #3FA767; fg: #F9EC31;" />
     <listbar v-focus ref='actionbar' :style="{selected: {bold: true}}" :bottom="1" left="left" :height="1" :items="actions" @keypress="onActionbarKeypress" />
   </box>
 </template>
@@ -87,7 +87,7 @@
     mounted() {
       if (this.issue.fields.assignee) {
         let that = this;
-        let avatarUrl = this.issue.fields.assignee.avatarUrls['48x48'], filename = fs.realpathSync('tmp')+'/picture.png';
+        let avatarUrl = this.issue.fields.assignee.avatarUrls['48x48'], filename = fs.realpathSync('tmp')+'/avatar.'+this.issue.fields.assignee.name+'.png';
         let file = fs.createWriteStream(filename);
         let request = https.get(avatarUrl, (response) => {
           response.pipe(file);

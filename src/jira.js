@@ -1,7 +1,7 @@
 import JiraClient from 'jira-connector';
 import FileCookieStore from 'tough-cookie-filestore';
 import request from 'request';
-let jar = request.jar(new FileCookieStore('cookies.json'));
+let jar = request.jar(new FileCookieStore('tmp/cookies.json'));
 let jira = new JiraClient({
   protocol: 'https',
   authApiVersion: '1',
